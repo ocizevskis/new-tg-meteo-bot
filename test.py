@@ -118,7 +118,7 @@ mystations = CommandHandler("mystations",mystations)
 start = CommandHandler("start",hello)
 # add = CommandHandler("add",add)
 
-app = ApplicationBuilder().token("stuff").build()
+app = ApplicationBuilder().token("5637989500:AAFBu3aHNzAlifMwUrTA5zlIcQIMM670AMo").build()
 add_convo = ConversationHandler(entry_points=[CommandHandler("add", add)],
                          states= {0:[MessageHandler(filters=filters.ALL,callback=add_station)],
                                   1:[MessageHandler(filters=filters.ALL,callback=add_level)],
