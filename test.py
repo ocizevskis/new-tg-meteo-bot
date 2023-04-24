@@ -1,7 +1,7 @@
 import telegram
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes,ConversationHandler,MessageHandler,filters
 from modules.wrappers import Sqlite
-
+import os
 from tabulate import tabulate
 
 
@@ -9,8 +9,6 @@ async def hello(update: telegram.Update, context: ContextTypes.DEFAULT_TYPE) -> 
     print(update)
     await update.message.reply_text(reply_markup="ye",text="test")
     
-
-
 
 
 async def add(update: telegram.Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -92,13 +90,6 @@ async def mystations(update: telegram.Update, context: ContextTypes.DEFAULT_TYPE
 
 
 
-
-
-
-
-
-
-
 async def cancel(update: telegram.Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     """Cancels and ends the conversation."""
@@ -107,18 +98,10 @@ async def cancel(update: telegram.Update, context: ContextTypes.DEFAULT_TYPE) ->
     return ConversationHandler.END
 
 
-    await update.message.reply_text(
-
-        "Bye! I hope we can talk again some day.", reply_markup=telegram.ReplyKeyboardRemove()
-
-    )
-
-
 mystations = CommandHandler("mystations",mystations)
 start = CommandHandler("start",hello)
-# add = CommandHandler("add",add)
 
-app = ApplicationBuilder().token("5637989500:AAFBu3aHNzAlifMwUrTA5zlIcQIMM670AMo").build()
+app = ApplicationBuilder().token(os.environ["TGBOT_TOKEN"]).build()
 add_convo = ConversationHandler(entry_points=[CommandHandler("add", add)],
                          states= {0:[MessageHandler(filters=filters.ALL,callback=add_station)],
                                   1:[MessageHandler(filters=filters.ALL,callback=add_level)],
