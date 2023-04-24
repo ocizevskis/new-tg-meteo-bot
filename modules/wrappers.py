@@ -30,6 +30,9 @@ class Sqlite():
     def del_user_river(self,chatid:int,station:str) -> None:
         self.cursor.execute("delete from user_rivers where chatid = ? and station = ?", (chatid,station))
         
+    def update_data(self,data:tuple):
+        self.cursor.execute("update data set level = ?, date = ? where station = ?",data)
+        
         
     def commit_and_close(self) -> None:
         self.conn.commit()
