@@ -1,0 +1,24 @@
+import java.sql.*
+import org.sqlite.SQLiteDataSource
+import simplesql as sq
+import scalaj.http.{Http, HttpOptions}
+
+case class Task(id: Int, task: String) derives sq.Reader
+
+@main def SQLiteTest3 =
+
+    val result = Http("https://api.telegram.org/bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11/getMe
+").asString
+
+
+    // val ds = SQLiteDataSource()
+    // ds.setUrl("jdbc:sqlite:./ToDoList.sqlite")
+
+    // sq.transaction(ds) {
+    //     val tasks: List[Task] = sq.read[Task](sql"select id, task from tasks")
+    //     for t <- tasks do
+    //         println(s"ID: ${t.id}, TASK: ${t.task}")
+    // }
+
+
+    

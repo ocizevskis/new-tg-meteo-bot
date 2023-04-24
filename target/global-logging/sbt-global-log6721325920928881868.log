@@ -1,0 +1,14 @@
+[debug] > Exec(sbtStashOnFailure, None, None)
+[debug] > Exec(sbtMapExec 282 __96b4342c-3985-4809-915f-76574ecd3ab7, None, None)
+[debug] > Exec(bspScalaTestClasses file:/home/oskar/git-projects/new-tg-meteo-bot/#new-tg-meteo-bot/Compile, Some(__96b4342c-3985-4809-915f-76574ecd3ab7), Some(CommandSource(network-1)))
+[debug] jsonRpcNotify: JsonRpcNotificationMessage(2.0, build/logMessage, {"type":4,"message":"Processing buildTarget/scalaTestClasses"})
+[debug] Evaluating tasks: bspScalaTestClasses
+[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
+[success] Total time: 0 s, completed Apr 24, 2023, 12:16:55 AM
+[debug] > Exec(sbtCompleteExec 282, None, None)
+[debug] > Exec(resumeFromFailure, None, None)
+[debug] > Exec(sbtPopOnFailure, None, None)
+[debug] > Exec(sbtReportResult 282, Some(282), Some(CommandSource(network-1)))
+[debug] unmatched Processing event for requestId Some(282): None
+[debug] unmatched json response for requestId Some(282): {"status":"Done","channelName":"network-1","execId":"282","commandQueue":["shell"],"exitCode":0}
+[debug] > Exec(shell, None, None)
