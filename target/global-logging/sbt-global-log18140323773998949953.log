@@ -2,3 +2,4 @@
 [debug] > Exec(shell, None, None)
 [debug] jsonRpcNotify: JsonRpcNotificationMessage(2.0, shutdown, [false,null])
 [debug] Forcing garbage collection...
+[debug] jsonRpcNotify: JsonRpcNotificationMessage(2.0, shutdown, [false,null])

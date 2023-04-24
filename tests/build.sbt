@@ -10,9 +10,5 @@ lazy val root = project
 
     libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test,
     libraryDependencies += "com.lihaoyi" %% "requests" % "0.8.0",
-    libraryDependencies += "org.json4s" %% "json4s-native" % "4.0.6",
-    libraryDependencies += "org.xerial"%%"sqlite-jdbc"%"3.39.2.1"
-
-
-
+    libraryDependencies += "org.json4s" %% "json4s-jackson" % "4.0.6"
   )
