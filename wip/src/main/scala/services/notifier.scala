@@ -64,7 +64,5 @@ object notifier {
       row.level > row.threshold && !row.is_notified
 
     val notifyable = data.filter(condition(_))
-
-    println(notifyable)
     notifyable.foreach(send_notif)
 }

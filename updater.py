@@ -52,7 +52,7 @@ def filter_data(data:list[Station]):
         
         return Station(ts=obs,name=s.name.split(",")[1][1:])
     
-    wl_data = list(map(__keep_only_wl,data))
+    wl_data = map(__keep_only_wl,data)
     is_not_empty = lambda s: len(s.ts) > 0
     return list(filter(is_not_empty,wl_data))
      
@@ -77,3 +77,39 @@ def create_data_table():
 
 update_data_table()
 
+
+@dataclass
+class UserRiver(
+  chatid: Int, 
+  station: String, 
+  level: Float,
+  date: String, 
+  threshold: Float, 
+  is_notified: Boolean)
+
+
+def send_notif(i: UserRiver):
+  text = f"""Pašreizējais ūdens līmenis
+  stacijā '{i.station}': {i.level}m. 
+  Dati pēdējoreiz atjaunināti {i.date}"""
+  
+  message  = {"chat_id": i.chatid.toString,
+      "text": text}
+
+  token = os.environ["TGBOT_TOKEN"]
+
+  url = f"https://api.telegram.org/{token}/sendMessage"
+
+  requests.post(url, data = message)
+
+
+
+def notify():
+  data = get_data(
+  "jdbc:sqlite:../meteo.db",
+  "Select * from user_rivers join data on user_rivers.station = data.station")
+
+  should_notify = lambda i: i.level > i.threshold and not i.is_notified
+
+  notifyable = filter(should_notify, data)
+  notifyable.foreach(send_notif)
