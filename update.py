@@ -34,7 +34,8 @@ class Station:
     plots: list[Plot] = 0
     ts: list[Observation] = 0
 
-def parse_hymer():
+def parse_hymer() -> list[Station]:
+    """parse hymer json file to get data"""
     url = "https://videscentrs.lvgmc.lv/data/hymer_overview"
     json_string = requests.get(url=url).text.replace("null","0.00")
     
@@ -44,7 +45,8 @@ def parse_hymer():
     return list(map(to_dataclass,hymer_data))
     
     
-def filter_data(data:list[Station]):
+def filter_data(data:list[Station]) -> list[Station]:
+    """filter data such that only water level measurements are kept"""
     
     def __keep_only_wl(s:Station):
         obs = [i for i in s.ts if i.name == "Ūdens līmenis"]
@@ -74,4 +76,7 @@ def update_data_table():
 def create_data_table():
     pass
 
-update_data_table()
+
+if __name__ == "__main__":
+    print("updating database")
+    update_data_table()

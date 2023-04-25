@@ -1,9 +1,7 @@
 import sqlite3
 
 class Sqlite():
-    
     """wrapper for frequently used sqlite commands"""
-    
     
     
     def __init__(self,address) -> None:
@@ -33,7 +31,7 @@ class Sqlite():
     def update_data(self,data:tuple):
         self.cursor.execute("update data set level = ?, date = ? where station = ?",data)
         
-    def read(self,query:str):
+    def read(self,query:str) -> dict:
         self.cursor.execute(query)
         names = [d[0] for d in self.cursor.description]
         tuple_list =  self.cursor.fetchall()

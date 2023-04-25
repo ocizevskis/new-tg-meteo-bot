@@ -7,16 +7,21 @@ from modules.wrappers import Sqlite
 
 @dataclass
 class UserRiver:
-  chatid: int 
-  station: str 
-  level: float
-  date: str 
-  threshold: float 
-  is_notified: int
-  plot_url: str
+    """contains all data needed for sending 
+    notifications to users; use of this dataclass
+    over a dict is purely a personal preference tbh"""
+    chatid: int 
+    station: str 
+    level: float
+    date: str 
+    threshold: float 
+    is_notified: int
+    plot_url: str
 
 
 def send_notif(i: UserRiver):
+    """sends a notification to user based on info in the inputted UserRiver object"""
+    
     text = f"""Pašreizējais ūdens līmenis stacijā '{i.station}': {i.level}m. Dati pēdējoreiz atjaunināti {i.date}
     https://hidro.meteo.lv/hymer/images/{i.plot_url}"""
 
