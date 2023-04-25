@@ -33,6 +33,15 @@ class Sqlite():
     def update_data(self,data:tuple):
         self.cursor.execute("update data set level = ?, date = ? where station = ?",data)
         
+    def read(self,query:str):
+        self.cursor.execute(query)
+        names = [d[0] for d in self.cursor.description]
+        tuple_list =  self.cursor.fetchall()
+        return [{k:v for k,v in zip(names,i)} for i in tuple_list]
+        
+    def write(self,query:str,data:tuple|dict):
+        self.cursor.execute(query,data)
+ 
         
     def commit_and_close(self) -> None:
         self.conn.commit()

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import requests
 import json
 from dacite import from_dict
-import typing as t
+import os
 from modules.wrappers import Sqlite
 
 
@@ -40,9 +40,9 @@ def parse_hymer():
     json_string = requests.get(url=url).text.replace("null","0.00")
     
     hymer_data = json.loads(json_string)
-    temp = lambda x: from_dict(data = x, data_class = Station)
+    to_dataclass = lambda x: from_dict(data = x, data_class = Station)
     
-    return list(map(temp,hymer_data))
+    return list(map(to_dataclass,hymer_data))
     
     
 def filter_data(data:list[Station]):
@@ -79,37 +79,53 @@ update_data_table()
 
 
 @dataclass
-class UserRiver(
-  chatid: Int, 
-  station: String, 
-  level: Float,
-  date: String, 
-  threshold: Float, 
-  is_notified: Boolean)
+class UserRiver:
+  chatid: int 
+  station: str 
+  level: float
+  date: str 
+  threshold: float 
+  is_notified: int
 
 
 def send_notif(i: UserRiver):
-  text = f"""Pašreizējais ūdens līmenis
-  stacijā '{i.station}': {i.level}m. 
-  Dati pēdējoreiz atjaunināti {i.date}"""
-  
-  message  = {"chat_id": i.chatid.toString,
-      "text": text}
+    text = f"""Pašreizējais ūdens līmenis
+    stacijā '{i.station}': {i.level}m. 
+    Dati pēdējoreiz atjaunināti {i.date}"""
 
-  token = os.environ["TGBOT_TOKEN"]
+    message  = {"chat_id": str(i.chatid),
+        "text": text}
 
-  url = f"https://api.telegram.org/{token}/sendMessage"
+    token = os.environ["TGBOT_TOKEN"]
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
 
-  requests.post(url, data = message)
-
+    response = requests.post(url, data = message)
+    print(response)
 
 
 def notify():
-  data = get_data(
-  "jdbc:sqlite:../meteo.db",
-  "Select * from user_rivers join data on user_rivers.station = data.station")
+    db = Sqlite("./meteo.db")
+    data = db.read(
+    "Select * from user_rivers join data on user_rivers.station = data.station")
+    
+    #real men don't need ORMs
+    to_dataclass = lambda x: from_dict(data = x, data_class = UserRiver)
+    data = map(to_dataclass,data)
 
-  should_notify = lambda i: i.level > i.threshold and not i.is_notified
+    should_notify = lambda i: i.level > i.threshold and not i.is_notified
+    should_reset_flag = lambda i: i.level < i.threshold and i.is_notified
+    
+    notifyable = filter(should_notify, data)
+    resettable = filter(should_reset_flag, data)
 
-  notifyable = filter(should_notify, data)
-  notifyable.foreach(send_notif)
+    for i in notifyable:
+        send_notif(i)
+        db.write("update user_rivers set is_notified = 1 where chatid = ? and station = ?", (i.chatid,i.station))
+        
+    for i in resettable:
+        db.write("update user_rivers set is_notified = 1 where chatid = ? and station = ?", (i.chatid,i.station))
+        
+    db.commit_and_close()
+        
+        
+notify()
