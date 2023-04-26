@@ -2,6 +2,7 @@ import telegram
 from telegram.ext import CommandHandler, ContextTypes, ConversationHandler, MessageHandler, filters
 from modules.wrappers import Sqlite
 from modules.commands import cancel
+import requests
 import os
 
 async def get_river(update: telegram.Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -48,11 +49,13 @@ async def get_done(update: telegram.Update, context: ContextTypes.DEFAULT_TYPE) 
     db.commit_and_close()
     
     
-    text = f"""Pašreizējais ūdens līmenis stacijā '{data["station"]}': {data["level"]}m. Dati pēdējoreiz atjaunināti {data["date"]}
-    https://hidro.meteo.lv/hymer/images/{data["plot_url"]}"""
+    text = f"""Pašreizējais ūdens līmenis stacijā '{data["station"]}': {data["level"]}m. Dati pēdējoreiz atjaunināti {data["date"]}"""
+    
+    image = requests.get(f'https://hidro.meteo.lv/hymer/images/{data["plot_url"]}').content
 
     
     await update.message.reply_text(text=text,reply_markup=telegram.ReplyKeyboardRemove())
+    await update.message.reply_photo(photo=image)
     
     return -1
 

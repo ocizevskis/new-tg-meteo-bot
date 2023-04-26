@@ -44,14 +44,14 @@ def parse_hymer() -> list[Station]:
     
     return list(map(to_dataclass,hymer_data))
     
-    
 def filter_data(data:list[Station]) -> list[Station]:
     """filter data such that only water level measurements are kept"""
     
     def __keep_only_wl(s:Station):
         obs = [i for i in s.ts if i.name == "Ūdens līmenis"]
+        plots = [i for i in s.plots if "ūdens" in i.name]
         
-        return Station(ts=obs,name=s.name.split(",")[1][1:])
+        return Station(ts=obs,name=s.name,plots=plots)
     
     wl_data = map(__keep_only_wl,data)
     is_not_empty = lambda s: len(s.ts) > 0
@@ -64,7 +64,7 @@ def update_data_table():
     data_filtered = filter_data(data=data)
     print(data_filtered[0].name)
     
-    update_tuple = lambda s: (s.ts[0].value,s.ts[0].last_date,s.name)
+    update_tuple = lambda s: (s.ts[0].value,s.ts[0].last_date,s.name.split(",")[1][1:])
     data_tuples = map(update_tuple,data_filtered)
     
     for t in data_tuples:
@@ -74,9 +74,35 @@ def update_data_table():
            
 
 def create_data_table():
-    pass
+    db = Sqlite("meteo.db")
+    data = parse_hymer()
+    data_filtered = filter_data(data=data)
+    print(data_filtered[0].name)
+    
+    update_tuple = lambda s: (
+        s.name.split(",")[1][1:],
+        s.name.split(",")[0],
+        s.lat,
+        s.lon,
+        s.plots[0].url,
+        s.ts[0].last_date,
+        s.ts[0].value)
+    data_tuples = map(update_tuple,data_filtered)
+    
+    
+    query = "INSERT INTO data VALUES (?,?,?,?,?,?,?)"
+    for t in data_tuples:
+        db.write(query=query,data=t)
+        print(query,t)
+    db.commit_and_close()    
 
 
 if __name__ == "__main__":
-    print("updating database")
-    update_data_table()
+    #too lazy to set up a cron job ok?
+    while True:
+        import time
+        import notify
+        print("updating database")
+        update_data_table()
+        notify.notify()
+        time.sleep(3600)
