@@ -44,6 +44,8 @@ def parse_hymer() -> list[Station]:
     
     return list(map(to_dataclass,hymer_data))
     
+    
+    
 def filter_data(data:list[Station]) -> list[Station]:
     """filter data such that only water level measurements are kept"""
     
